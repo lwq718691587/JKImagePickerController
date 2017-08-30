@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'JKImagePickerController'
-s.version          = '0.1.1'
+s.version          = '0.1.2'
 s.summary          = '健客多图片选择器'
 s.homepage         = 'https://github.com/lwq718691587/JKImagePickerController'
 s.license          = { :type => 'MIT', :file => 'LICENSE' }

@@ -25,13 +25,22 @@
 
 @implementation JKPreviewController
 
-
 + (UINavigationController *)createWith:(NSMutableArray *)photos
-                     blackPageIndex:(int)blackPageIndex{
+                        blackPageIndex:(int)blackPageIndex{
+    JKPreviewController *pvc = [[JKPreviewController alloc]init];
+    pvc.photos = photos;
+    pvc.blackPageIndex = blackPageIndex;
+    UINavigationController * nvc = [[UINavigationController alloc]initWithRootViewController:pvc];
+    return nvc;
+}
++ (UINavigationController *)createWith:(NSMutableArray *)photos
+                        blackPageIndex:(int)blackPageIndex
+                    deleteSuccessBlcok:(void(^)(NSMutableArray * photos))deleteSuccessBlcok{
     
     JKPreviewController *pvc = [[JKPreviewController alloc]init];
     pvc.photos = photos;
     pvc.blackPageIndex = blackPageIndex;
+    pvc.deleteSuccess = deleteSuccessBlcok;
     UINavigationController * nvc = [[UINavigationController alloc]initWithRootViewController:pvc];
     return nvc;
 }
@@ -42,7 +51,7 @@
     
     self.title = [NSString stringWithFormat:@"%d/%lu",(self.blackPageIndex + 1),(unsigned long)self.photos.count];
     self.navigationController.navigationBar.titleTextAttributes =@{NSForegroundColorAttributeName:[UIColor whiteColor],NSFontAttributeName:[UIFont boldSystemFontOfSize:18]};
-
+    
     UIButton *gobackBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     gobackBtn.frame = CGRectMake(0, 0, 44, 44);
     gobackBtn.contentEdgeInsets = UIEdgeInsetsMake(12,0,12, 32);
@@ -71,7 +80,7 @@
     
     UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backViewController:)];
     [backView addGestureRecognizer:gesture];
-   
+    
 }
 - (void)setScrollView:(NSArray *)PhotoArray {
     _pagingScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 64, jkScreenWidth, jkScreenHeight - 64)];
@@ -88,7 +97,7 @@
         [doubleTap setNumberOfTapsRequired:2];
         
         
-      
+        
         
         UIScrollView*scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(jkScreenWidth * i ,0,jkScreenWidth,jkScreenHeight - 64)];
         scrollView.backgroundColor= [UIColor clearColor];
@@ -114,7 +123,7 @@
         
         [gesture requireGestureRecognizerToFail:doubleTap];
     }
-
+    
 }
 
 - (void)goBackViewController {
@@ -144,13 +153,15 @@
         [self setScrollView:self.photos];
         
         if (self.photos.count == 0) {
-            [self.navigationController popViewControllerAnimated:YES];
+            [self dismissViewControllerAnimated:YES completion:nil];
         }else {
             _pagingScrollView.contentSize = CGSizeMake(jkScreenWidth * self.photos.count, jkScreenHeight - 100);
             _pagingScrollView.contentOffset = CGPointMake(0, 0);
             self.title = [NSString stringWithFormat:@"%d/%lu",(self.blackPageIndex + 1),(unsigned long)self.photos.count];
         }
-        
+        if (self.deleteSuccess) {
+            self.deleteSuccess(self.photos);
+        }
     }
 }
 
@@ -210,7 +221,7 @@
     return zoomRect;
 }
 - (void)backViewController:(UITapGestureRecognizer *)gesture {
-    [self.navigationController popViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView  {

@@ -11,8 +11,21 @@
 @interface JKPreviewController : UIViewController
 
 
+/**
+ 不需要删除回调
+ */
 + (UINavigationController *)createWith:(NSMutableArray *)photos
                         blackPageIndex:(int)blackPageIndex;
+
+
+/**
+ 需要删除回调
+ */
++ (UINavigationController *)createWith:(NSMutableArray *)photos
+                        blackPageIndex:(int)blackPageIndex
+                    deleteSuccessBlcok:(void(^)(NSMutableArray * photos))deleteSuccessBlcok;
+
+@property (nonatomic, copy) void(^deleteSuccess)(NSMutableArray * photos);
 
 @property (nonatomic, strong) NSMutableArray *photos;
 

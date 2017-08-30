@@ -10,11 +10,15 @@
 
 @interface JKPreviewController : UIViewController
 
+
++ (UINavigationController *)createWith:(NSMutableArray *)photos
+                        blackPageIndex:(int)blackPageIndex;
+
 @property (nonatomic, strong) NSMutableArray *photos;
 
 @property (nonatomic, assign) int blackPageIndex;
 
-@property (strong, nonatomic) UIScrollView *pagingScrollView;
+
 
 
 @end

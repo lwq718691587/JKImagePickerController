@@ -18,23 +18,50 @@
     
 }
 @property (nonatomic,strong) UIView *pageControlSuperView;
-@property (nonatomic, strong) UILabel *titleLabel;
+
+@property (strong, nonatomic) UIScrollView *pagingScrollView;
 
 @end
 
 @implementation JKPreviewController
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    [self.navigationController setNavigationBarHidden:YES animated:YES];
+
++ (UINavigationController *)createWith:(NSMutableArray *)photos
+                     blackPageIndex:(int)blackPageIndex{
+    
+    JKPreviewController *pvc = [[JKPreviewController alloc]init];
+    pvc.photos = photos;
+    pvc.blackPageIndex = blackPageIndex;
+    UINavigationController * nvc = [[UINavigationController alloc]initWithRootViewController:pvc];
+    return nvc;
 }
-- (void)viewWillDisappear:(BOOL)animated{
-    [super viewWillDisappear:animated];
-    [self.navigationController setNavigationBarHidden:NO animated:YES];
-}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    self.title = [NSString stringWithFormat:@"%d/%lu",(self.blackPageIndex + 1),(unsigned long)self.photos.count];
+    self.navigationController.navigationBar.titleTextAttributes =@{NSForegroundColorAttributeName:[UIColor whiteColor],NSFontAttributeName:[UIFont boldSystemFontOfSize:18]};
+
+    UIButton *gobackBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    gobackBtn.frame = CGRectMake(0, 0, 44, 44);
+    gobackBtn.contentEdgeInsets = UIEdgeInsetsMake(12,0,12, 32);
+    [gobackBtn setImage:[UIImage imageNamed:@"goback"] forState:UIControlStateNormal];
+    
+    [gobackBtn addTarget:self action:@selector(goBackViewController) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:gobackBtn];
+    
+    UIButton *deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    deleteButton.frame = CGRectMake(0, 0, 44, 44);
+    deleteButton.contentEdgeInsets = UIEdgeInsetsMake(10,24,10, 0);
+    [deleteButton setImage:[UIImage imageNamed:@"ask_delete"] forState:UIControlStateNormal];
+    [deleteButton addTarget:self action:@selector(deletePhoto) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:deleteButton];
+    
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBar.translucent = YES;
+    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
+    self.navigationController.navigationBar.backgroundColor = [UIColor blackColor];
     
     UIView *backView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, jkScreenWidth, jkScreenHeight)];
     backView.backgroundColor = [UIColor clearColor];
@@ -44,13 +71,11 @@
     
     UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backViewController:)];
     [backView addGestureRecognizer:gesture];
-    
-    [self setHeaderViews];
    
 }
 - (void)setScrollView:(NSArray *)PhotoArray {
-    _pagingScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 64, jkScreenWidth, jkScreenHeight-64)];
-    _pagingScrollView.contentSize = CGSizeMake(jkScreenWidth * self.photos.count , jkScreenHeight-64);
+    _pagingScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 64, jkScreenWidth, jkScreenHeight - 64)];
+    _pagingScrollView.contentSize = CGSizeMake(jkScreenWidth * self.photos.count , jkScreenHeight - 64);
     _pagingScrollView.pagingEnabled = YES;
     _pagingScrollView.showsHorizontalScrollIndicator = NO;
     _pagingScrollView.contentOffset = CGPointMake(jkScreenWidth *self.blackPageIndex, 0);
@@ -62,24 +87,24 @@
         UITapGestureRecognizer*doubleTap =[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleDoubleTap:)];
         [doubleTap setNumberOfTapsRequired:2];
         
-        UIImage *image = self.photos[i];
-        CGFloat scrollViewWidth = jkScreenWidth - 10;
-        CGFloat scrollViewHight = (jkScreenWidth-10)/image.size.width *image.size.height;
         
-        UIScrollView*scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(jkScreenWidth*i + 5,(jkScreenHeight - scrollViewHight)/2 - 64,scrollViewWidth,scrollViewHight)];
+      
+        
+        UIScrollView*scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(jkScreenWidth * i ,0,jkScreenWidth,jkScreenHeight - 64)];
         scrollView.backgroundColor= [UIColor clearColor];
-        scrollView.contentSize=CGSizeMake(jkScreenWidth,scrollViewHight);
+        scrollView.contentSize = CGSizeMake(jkScreenWidth,jkScreenHeight - 64);
         scrollView.showsHorizontalScrollIndicator = NO;
         scrollView.showsVerticalScrollIndicator = NO;
-        scrollView.delegate=self;
+        scrollView.delegate = self;
         scrollView.minimumZoomScale=1.0;
         scrollView.maximumZoomScale=2.0;
         [scrollView setZoomScale:1.0];
         
-        UIImageView *photoImage = [[UIImageView alloc] initWithFrame:CGRectMake(0,0,scrollViewWidth,scrollViewHight)];
+        UIImageView *photoImage = [[UIImageView alloc] initWithFrame:CGRectMake(0,0,jkScreenWidth,jkScreenHeight - 64)];
         photoImage.userInteractionEnabled = YES;
         photoImage.tag = i + 1;
         photoImage.image = self.photos[i];
+        [photoImage setContentMode:UIViewContentModeScaleAspectFit];
         [photoImage addGestureRecognizer:doubleTap];
         [scrollView addSubview:photoImage];
         [_pagingScrollView addSubview:scrollView];
@@ -91,36 +116,9 @@
     }
 
 }
-- (void)setHeaderViews {
-    UIView *blackView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, jkScreenWidth, 64)];
-    blackView.backgroundColor = [UIColor clearColor];
-    [self.view addSubview:blackView];
-    
-    self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake((jkScreenWidth - 120)/2, 20, 120, 44)];
-    self.titleLabel.text = [NSString stringWithFormat:@"%d/%lu",(self.blackPageIndex + 1),(unsigned long)self.photos.count];
-    self.titleLabel.font = [UIFont systemFontOfSize:18];
-    self.titleLabel.textColor = [UIColor whiteColor];
-    self.titleLabel.textAlignment = NSTextAlignmentCenter;
-     self.titleLabel.text = [NSString stringWithFormat:@"%d/%lu",(self.blackPageIndex + 1),(unsigned long)self.photos.count];
-    [blackView addSubview:self.titleLabel];
-    
-    UIButton *gobackBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    gobackBtn.frame = CGRectMake(0, 0, 60, 60);
-    gobackBtn.contentEdgeInsets = UIEdgeInsetsMake(33,20, 7, 30);
-    [gobackBtn setImage:[UIImage imageNamed:@"goback"] forState:UIControlStateNormal];
-    [gobackBtn addTarget:self action:@selector(goBackViewController) forControlEvents:UIControlEventTouchUpInside];
-    [blackView addSubview:gobackBtn];
-    
-    UIButton *deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    deleteButton.frame = CGRectMake(jkScreenWidth - 80, 0, 60, 60);
-    deleteButton.contentEdgeInsets = UIEdgeInsetsMake(30,40, 7, 0);
-    [deleteButton setImage:[UIImage imageNamed:@"ask_delete"] forState:UIControlStateNormal];
-    [deleteButton addTarget:self action:@selector(deletePhoto) forControlEvents:UIControlEventTouchUpInside];
-    [blackView addSubview:deleteButton];
-    
-}
+
 - (void)goBackViewController {
-    [self.navigationController popViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 - (void)deletePhoto {
     UIActionSheet *actionSheet = [[UIActionSheet alloc]
@@ -150,7 +148,7 @@
         }else {
             _pagingScrollView.contentSize = CGSizeMake(jkScreenWidth * self.photos.count, jkScreenHeight - 100);
             _pagingScrollView.contentOffset = CGPointMake(0, 0);
-            self.titleLabel.text = [NSString stringWithFormat:@"%d/%lu",(self.blackPageIndex + 1),(unsigned long)self.photos.count];
+            self.title = [NSString stringWithFormat:@"%d/%lu",(self.blackPageIndex + 1),(unsigned long)self.photos.count];
         }
         
     }
@@ -222,12 +220,9 @@
     if (index < 0) index = 0;
     if (index > self.photos.count - 1) index = self.photos.count - 1;
     self.blackPageIndex = (int)index;
-    self.titleLabel.text = [NSString stringWithFormat:@"%d/%lu",(self.blackPageIndex + 1),(unsigned long)self.photos.count];
+    self.title = [NSString stringWithFormat:@"%d/%lu",(self.blackPageIndex + 1),(unsigned long)self.photos.count];
 }
-- (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidDisappear:YES];
-    [self.navigationController setNavigationBarHidden:NO animated:YES];
-}
+
 
 
 @end

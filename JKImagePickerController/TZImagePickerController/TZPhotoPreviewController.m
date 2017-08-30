@@ -279,5 +279,7 @@
         _originalPhotoLable.text = [NSString stringWithFormat:@"(%@)",totalBytes];
     }];
 }
-
+-(BOOL)prefersStatusBarHidden{
+    return YES;
+}
 @end

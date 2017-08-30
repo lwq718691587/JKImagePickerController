@@ -1,0 +1,16 @@
+PODS:
+  - JKImagePickerController (0.1.0)
+
+DEPENDENCIES:
+  - JKImagePickerController (from `../`)
+
+EXTERNAL SOURCES:
+  JKImagePickerController:
+    :path: ../
+
+SPEC CHECKSUMS:
+  JKImagePickerController: eb9fb6cbf15bc8196503b89fddd3613fb2a6a25f
+
+PODFILE CHECKSUM: d0eb28562059d4e16ac50e46d0f7329ef47ade31
+
+COCOAPODS: 1.3.0.beta.2

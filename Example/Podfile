@@ -1,0 +1,11 @@
+#use_frameworks!
+
+target 'JKImagePickerController_Example' do
+  pod 'JKImagePickerController', :path => '../'
+
+  target 'JKImagePickerController_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end

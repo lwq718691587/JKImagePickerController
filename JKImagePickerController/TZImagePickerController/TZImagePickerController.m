@@ -32,16 +32,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
-    self.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationBar.translucent = YES;
-    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
-    [UIApplication sharedApplication].statusBarHidden = NO;
     
     // Default appearance, you can reset these after this method
     // 默认的外观，你可以在这个方法后重置
     self.oKButtonTitleColorNormal   = [UIColor colorWithRed:(83/255.0) green:(179/255.0) blue:(17/255.0) alpha:1.0];
     self.oKButtonTitleColorDisabled = [UIColor colorWithRed:(83/255.0) green:(179/255.0) blue:(17/255.0) alpha:0.5];
-  
+    
     UIBarButtonItem *barItem;
     if (iOS9Later) {
         barItem = [UIBarButtonItem appearanceWhenContainedInInstancesOfClasses:@[[TZImagePickerController class]]];
@@ -49,9 +45,13 @@
         barItem = [UIBarButtonItem appearanceWhenContainedIn:[TZImagePickerController class], nil];
     }
     NSMutableDictionary *textAttrs = [NSMutableDictionary dictionary];
-    textAttrs[NSForegroundColorAttributeName] = [UIColor colorWithRed:68 green:68 blue:68 alpha:1];
+    textAttrs[NSForegroundColorAttributeName] = [UIColor blackColor];
     textAttrs[NSFontAttributeName] = [UIFont systemFontOfSize:18];
     [barItem setTitleTextAttributes:textAttrs forState:UIControlStateNormal];
+    
+    self.navigationBar.tintColor  = [UIColor blackColor];
+    
+    
 }
 
 - (instancetype)initWithMaxImagesCount:(NSInteger)maxImagesCount delegate:(id<TZImagePickerControllerDelegate>)delegate {
@@ -120,7 +120,7 @@
     if (!_progressHUD) {
         _progressHUD = [UIButton buttonWithType:UIButtonTypeCustom];
         [_progressHUD setBackgroundColor:[UIColor clearColor]];
-
+        
         _HUDContainer = [[UIView alloc] init];
         _HUDContainer.frame = CGRectMake((self.view.tz_width - 120) / 2, (self.view.tz_height - 90) / 2, 120, 90);
         _HUDContainer.layer.cornerRadius = 8;
@@ -158,15 +158,6 @@
     if (iOS7Later) viewController.automaticallyAdjustsScrollViewInsets = NO;
     if (_timer) { [_timer invalidate]; _timer = nil;}
     
-    if (self.childViewControllers.count > 0) {
-        UIButton *backButton = [[UIButton alloc] initWithFrame:CGRectMake(3, 0, 44, 44)];
-        [backButton setImage:[UIImage imageNamed:@"navi_back"] forState:UIControlStateNormal];
-        backButton.imageEdgeInsets = UIEdgeInsetsMake(0, -5, 0, 0);
-        [backButton setTitle:@"返回" forState:UIControlStateNormal];
-        backButton.titleLabel.font = [UIFont systemFontOfSize:15];
-        [backButton addTarget:self action:@selector(popViewControllerAnimated:) forControlEvents:UIControlEventTouchUpInside];
-        viewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
-    }
     [super pushViewController:viewController animated:animated];
 }
 

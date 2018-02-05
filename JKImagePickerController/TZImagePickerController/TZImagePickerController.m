@@ -51,7 +51,7 @@
     
     self.navigationBar.tintColor  = [UIColor blackColor];
     
-    
+    self.navigationBar.translucent = YES;
 }
 
 - (instancetype)initWithMaxImagesCount:(NSInteger)maxImagesCount delegate:(id<TZImagePickerControllerDelegate>)delegate {

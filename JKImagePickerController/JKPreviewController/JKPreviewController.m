@@ -45,6 +45,11 @@
     return nvc;
 }
 
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
@@ -53,7 +58,7 @@
     self.navigationController.navigationBar.titleTextAttributes =@{NSForegroundColorAttributeName:[UIColor whiteColor],NSFontAttributeName:[UIFont boldSystemFontOfSize:18]};
     
     UIButton *gobackBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    gobackBtn.frame = CGRectMake(0, 0, 44, 44);
+    gobackBtn.frame = CGRectMake(0, 0, 44, 35);
     gobackBtn.contentEdgeInsets = UIEdgeInsetsMake(12,0,12, 32);
     [gobackBtn setImage:[UIImage imageNamed:@"goback"] forState:UIControlStateNormal];
     
@@ -61,7 +66,7 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:gobackBtn];
     
     UIButton *deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    deleteButton.frame = CGRectMake(0, 0, 44, 44);
+    deleteButton.frame = CGRectMake(0, 0, 44, 34);
     deleteButton.contentEdgeInsets = UIEdgeInsetsMake(10,24,10, 0);
     [deleteButton setImage:[UIImage imageNamed:@"ask_delete"] forState:UIControlStateNormal];
     [deleteButton addTarget:self action:@selector(deletePhoto) forControlEvents:UIControlEventTouchUpInside];

@@ -45,6 +45,11 @@
     return nvc;
 }
 
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
+}
+
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
@@ -76,7 +81,6 @@
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.translucent = YES;
-    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     self.navigationController.navigationBar.backgroundColor = [UIColor blackColor];
     
     UIView *backView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, jkScreenWidth, jkScreenHeight)];

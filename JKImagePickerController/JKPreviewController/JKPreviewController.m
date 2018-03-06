@@ -58,16 +58,18 @@
     self.navigationController.navigationBar.titleTextAttributes =@{NSForegroundColorAttributeName:[UIColor whiteColor],NSFontAttributeName:[UIFont boldSystemFontOfSize:18]};
     
     UIButton *gobackBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    gobackBtn.frame = CGRectMake(0, 0, 44, 35);
-    gobackBtn.contentEdgeInsets = UIEdgeInsetsMake(12,0,12, 32);
+    gobackBtn.frame = CGRectMake(0, 0, 44, 44);
+//    gobackBtn.contentEdgeInsets = UIEdgeInsetsMake(12,0,12, 34);
+    gobackBtn.imageEdgeInsets = UIEdgeInsetsMake(12, 0, 12, 33);
     [gobackBtn setImage:[UIImage imageNamed:@"goback"] forState:UIControlStateNormal];
     
     [gobackBtn addTarget:self action:@selector(goBackViewController) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:gobackBtn];
     
     UIButton *deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    deleteButton.frame = CGRectMake(0, 0, 44, 34);
-    deleteButton.contentEdgeInsets = UIEdgeInsetsMake(10,24,10, 0);
+    deleteButton.frame = CGRectMake(0, 0, 44, 44);
+//    deleteButton.contentEdgeInsets = UIEdgeInsetsMake(10,24,10, 0);
+    deleteButton.imageEdgeInsets = UIEdgeInsetsMake(10, 24, 10, 0);
     [deleteButton setImage:[UIImage imageNamed:@"ask_delete"] forState:UIControlStateNormal];
     [deleteButton addTarget:self action:@selector(deletePhoto) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:deleteButton];
